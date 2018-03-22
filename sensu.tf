@@ -26,15 +26,15 @@ data "template_file" "sensu_bootstrap" {
 
 # Create Sensu instance(s)
 resource "digitalocean_droplet" "sensu_node" {
-  count               = "${var.sensu_droplet_count}"
-  image               = "${var.do_image}"
-  name                = "${var.cluster_name}-${count.index}"
-  region              = "${var.do_region}"
-  size                = "${var.do_droplet_size}"
-  private_networking  = false
-  ssh_keys            = ["${digitalocean_ssh_key.sensu.fingerprint}"]
-  tags                = ["${digitalocean_tag.sensu_instance.id}"]
-  user_data           = "${data.template_file.sensu_bootstrap.rendered}"
+  count              = "${var.sensu_droplet_count}"
+  image              = "${var.do_image}"
+  name               = "${var.cluster_name}-${count.index}"
+  region             = "${var.do_region}"
+  size               = "${var.do_droplet_size}"
+  private_networking = false
+  ssh_keys           = ["${digitalocean_ssh_key.sensu.fingerprint}"]
+  tags               = ["${digitalocean_tag.sensu_instance.id}"]
+  user_data          = "${data.template_file.sensu_bootstrap.rendered}"
 
   provisioner "remote-exec" {
     inline = [
@@ -45,7 +45,7 @@ resource "digitalocean_droplet" "sensu_node" {
 
 # Create DNS names for Sensu instance(s)
 resource "digitalocean_record" "sensu_instances" {
-  count = "${var.sensu_droplet_count}"
+  count  = "${var.sensu_droplet_count}"
   domain = "${digitalocean_domain.sensu.name}"
   type   = "A"
   ttl    = 30
@@ -61,32 +61,32 @@ resource "digitalocean_firewall" "sensu" {
 
   inbound_rule = [
     {
-      protocol           = "tcp"
-      port_range         = "22"
-      source_addresses   = ["0.0.0.0/0", "::/0"]
+      protocol         = "tcp"
+      port_range       = "22"
+      source_addresses = ["0.0.0.0/0", "::/0"]
     },
     {
-      protocol           = "tcp"
-      port_range         = "3000"
-      source_addresses   = ["0.0.0.0/0", "::/0"]
+      protocol         = "tcp"
+      port_range       = "3000"
+      source_addresses = ["0.0.0.0/0", "::/0"]
     },
     {
-      protocol           = "tcp"
-      port_range         = "8080"
-      source_addresses   = ["0.0.0.0/0", "::/0"]
+      protocol         = "tcp"
+      port_range       = "8080"
+      source_addresses = ["0.0.0.0/0", "::/0"]
     },
   ]
 
   outbound_rule = [
     {
-      protocol                = "tcp"
-      port_range              = "53"
-      destination_addresses   = ["0.0.0.0/0", "::/0"]
+      protocol              = "tcp"
+      port_range            = "53"
+      destination_addresses = ["0.0.0.0/0", "::/0"]
     },
     {
-      protocol                = "udp"
-      port_range              = "53"
-      destination_addresses   = ["0.0.0.0/0", "::/0"]
+      protocol              = "udp"
+      port_range            = "53"
+      destination_addresses = ["0.0.0.0/0", "::/0"]
     },
   ]
 }
